@@ -4,7 +4,6 @@ import 'package:camera/camera.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:get/get.dart';
 
 import 'camera.dart';
 
@@ -73,38 +72,34 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   Future<bool> onWillPop() {
-    DateTime now = DateTime.now();
-    if (now.difference(currentBackPressTime) > const Duration(seconds: 2)) {
-      currentBackPressTime = now;
-      return Future.value(false);
-    } else {
-      showDialog(
-          context: context,
-          barrierDismissible: false,
-          builder: (context) => AlertDialog(
-                title: const Text(
-                  "Are you sure you want to exit",
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      fontSize: 20,
-                      color: Colors.black),
-                ),
-                actions: [
-                  CupertinoButton(
-                      child: const Text("YES"),
-                      onPressed: () {
-                        Navigator.pop(context);
-                        Get.back();
-                      }),
-                  CupertinoButton(
-                      child: const Text("NO"),
-                      onPressed: () {
-                        Navigator.pop(context);
-                      }),
-                ],
-              ));
-      return Future.value(true);
-    }
+    showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder: (context) => AlertDialog(
+              title: const Text(
+                "Are you sure you want to exit",
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 20,
+                    color: Colors.black),
+              ),
+              actions: [
+                OutlinedButton(
+                    child: const Text("YES"),
+                    onPressed: () {
+                      Navigator.pop(context);
+                      Future.delayed(const Duration(milliseconds: 500)).then(
+                          (value) => SystemChannels.platform
+                              .invokeMethod('SystemNavigator.pop'));
+                    }),
+                OutlinedButton(
+                    child: const Text("NO"),
+                    onPressed: () {
+                      Navigator.pop(context);
+                    }),
+              ],
+            ));
+    return Future.value(true);
   }
 }
